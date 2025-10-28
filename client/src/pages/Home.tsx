@@ -147,6 +147,7 @@ const tourSteps = [
 ];
 
 export default function Home() {
+  const [tourStarted, setTourStarted] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [expandedStep, setExpandedStep] = useState<number | null>(1);
   const [isOffline] = useState(false); // TODO: remove mock functionality - detect real network status
@@ -171,13 +172,80 @@ export default function Home() {
 
   const completionPercentage = (completedSteps.length / tourSteps.length) * 100;
 
+  const resetTour = () => {
+    setCompletedSteps([]);
+    setExpandedStep(1);
+    setTourStarted(false);
+  };
+
+  const startTour = () => {
+    setTourStarted(true);
+    setExpandedStep(1);
+  };
+
+  if (!tourStarted) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-2xl w-full overflow-hidden">
+          <div className="aspect-video overflow-hidden">
+            <img 
+              src={cathedralExterior} 
+              alt="Sé de Braga"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="p-8 text-center space-y-6">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Church className="h-10 w-10 text-primary" />
+              <h1 className="text-4xl font-bold">Sé de Braga</h1>
+            </div>
+            <h2 className="text-xl text-muted-foreground">Guia Turístico Completo</h2>
+            
+            <div className="bg-muted/50 rounded-lg p-6 space-y-3 text-left">
+              <h3 className="font-semibold text-lg text-center mb-4">O que você vai descobrir:</h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-muted-foreground">{tourSteps.length} etapas guiadas pela catedral</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-muted-foreground">{totalDuration} minutos de história e arquitetura</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Download className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-muted-foreground">Disponível offline - baixe e explore sem internet</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-muted-foreground leading-relaxed">
+              Explore uma das catedrais mais antigas de Portugal, descobrindo seus tesouros 
+              históricos, arquitetônicos e artísticos. Do românico ao barroco, cada etapa 
+              revela segredos de mais de 900 anos de história.
+            </p>
+
+            <Button 
+              size="lg" 
+              className="w-full text-lg py-6"
+              onClick={startTour}
+            >
+              Iniciar Tour
+              <ChevronRight className="h-5 w-5 ml-2" />
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <OfflineIndicator isOffline={isOffline} />
 
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
         <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <Church className="h-6 w-6 text-primary" />
@@ -185,7 +253,17 @@ export default function Home() {
               </div>
               <p className="text-sm text-muted-foreground">Guia Completo Offline</p>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetTour}
+                className="text-xs"
+              >
+                Reiniciar
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
