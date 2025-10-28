@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import { Link } from "wouter";
 import { 
   ChevronRight, 
   Clock, 
@@ -225,14 +226,29 @@ export default function Home() {
               revela segredos de mais de 900 anos de história.
             </p>
 
-            <Button 
-              size="lg" 
-              className="w-full text-lg py-6"
-              onClick={startTour}
-            >
-              Iniciar Tour
-              <ChevronRight className="h-5 w-5 ml-2" />
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                size="lg" 
+                className="w-full text-lg py-6"
+                onClick={startTour}
+                data-testid="button-start-tour"
+              >
+                Iniciar Tour
+                <ChevronRight className="h-5 w-5 ml-2" />
+              </Button>
+
+              <Link href="/download">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full text-lg py-6"
+                  data-testid="button-download"
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  Descarregar Aplicação
+                </Button>
+              </Link>
+            </div>
           </div>
         </Card>
       </div>
