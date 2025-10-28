@@ -28,8 +28,8 @@ const tourSteps = [
     image: cathedralExterior,
     description: "Inicie a sua visita pela imponente fachada românica da Sé de Braga, construída no século XII. Esta é uma das mais antigas catedrais de Portugal.",
     details: [
-      "Observe a arquitetura românica com seus característicos arcos de volta perfeita",
-      "Note as esculturas medievais que decoram o portal principal",
+      "Observe a arquitectura românica com os seus característicos arcos de volta perfeita",
+      "Repare nas esculturas medievais que decoram o portal principal",
       "A torre sineira à esquerda foi adicionada no século XVIII",
       "O brasão de armas acima da entrada principal representa os arcebispos de Braga"
     ],
@@ -202,7 +202,7 @@ export default function Home() {
             <h2 className="text-xl text-muted-foreground">Guia Turístico Completo</h2>
             
             <div className="bg-muted/50 rounded-lg p-6 space-y-3 text-left">
-              <h3 className="font-semibold text-lg text-center mb-4">O que você vai descobrir:</h3>
+              <h3 className="font-semibold text-lg text-center mb-4">O que vai descobrir:</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
                   <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
@@ -210,18 +210,18 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-muted-foreground">{totalDuration} minutos de história e arquitetura</span>
+                  <span className="text-muted-foreground">{totalDuration} minutos de história e arquitectura</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Download className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-muted-foreground">Disponível offline - baixe e explore sem internet</span>
+                  <span className="text-muted-foreground">Disponível offline - descarregue e explore sem internet</span>
                 </div>
               </div>
             </div>
 
             <p className="text-muted-foreground leading-relaxed">
-              Explore uma das catedrais mais antigas de Portugal, descobrindo seus tesouros 
-              históricos, arquitetônicos e artísticos. Do românico ao barroco, cada etapa 
+              Explore uma das catedrais mais antigas de Portugal, descobrindo os seus tesouros 
+              históricos, arquitectónicos e artísticos. Do românico ao barroco, cada etapa 
               revela segredos de mais de 900 anos de história.
             </p>
 
@@ -421,7 +421,7 @@ export default function Home() {
             <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-3" />
             <h3 className="text-xl font-bold mb-2">Tour Completo! 🎉</h3>
             <p className="text-muted-foreground">
-              Parabéns! Você completou todas as etapas do tour pela Sé de Braga.
+              Parabéns! Completou todas as etapas do tour pela Sé de Braga.
             </p>
           </Card>
         )}
