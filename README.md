@@ -4,12 +4,38 @@ Aplicação web Progressive Web App (PWA) para explorar a Sé de Braga com guia 
 
 ## 🎯 Funcionalidades
 
+- ✅ **PWA Instalável** - Instale no telemóvel como app nativa
+- ✅ **Funciona Offline** - Use sem ligação à internet
 - ✅ Tela de entrada inicial
 - ✅ 8 etapas guiadas pela catedral
 - ✅ Marcação de progresso
 - ✅ Botão para reiniciar o tour
 - ✅ Modo escuro/claro
 - ✅ Design responsivo
+
+## 📱 Instalar como Aplicação (PWA)
+
+Esta aplicação pode ser instalada no seu telemóvel ou computador como se fosse uma app nativa!
+
+**📖 Consulte o guia completo:** [INSTALAR_PWA.md](./INSTALAR_PWA.md)
+
+### Instalação Rápida:
+
+**Android/Chrome:**
+1. Abra a app no navegador
+2. Toque em "Adicionar ao ecrã inicial"
+3. Pronto! Use como qualquer app
+
+**iPhone/Safari:**
+1. Toque no botão Partilhar
+2. Seleccione "Adicionar ao Ecrã Principal"
+3. Confirme
+
+**Vantagens:**
+- 📶 Funciona sem internet
+- 🚀 Carrega mais rápido
+- 📱 Ecrã completo (sem barra do navegador)
+- ✨ Ícone no ecrã inicial
 
 ## 📋 Pré-requisitos
 
