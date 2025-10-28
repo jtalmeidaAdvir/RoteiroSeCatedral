@@ -8,9 +8,18 @@ import {
   WifiOff,
   Zap,
   ArrowLeft,
-  Smartphone
+  Smartphone,
+  Share,
+  Plus
 } from "lucide-react";
 import { Link } from "wouter";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -20,40 +29,81 @@ interface BeforeInstallPromptEvent extends Event {
 export default function DownloadPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSModal, setShowIOSModal] = useState(false);
 
   useEffect(() => {
     // Detectar se já está instalada
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
-    }
+    const checkInstalled = () => {
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        return true;
+      }
+      // @ts-ignore - standalone é específico do iOS
+      if (window.navigator.standalone === true) {
+        return true;
+      }
+      return false;
+    };
+    
+    setIsInstalled(checkInstalled());
+
+    // Detectar iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(iOS);
 
     // Capturar o evento de instalação
-    const handler = (e: Event) => {
+    const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    // Escutar quando a app é instalada
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
   const handleInstallClick = async () => {
+    // Se é iOS, mostrar modal com instruções
+    if (isIOS) {
+      setShowIOSModal(true);
+      return;
+    }
+
+    // Se não temos o prompt, não podemos fazer nada
     if (!deferredPrompt) {
       return;
     }
 
-    deferredPrompt.prompt();
+    setIsInstalling(true);
     
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      setIsInstalled(true);
+    try {
+      // Mostrar o prompt de instalação nativo
+      await deferredPrompt.prompt();
+      
+      // Esperar pela escolha do utilizador
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        setIsInstalled(true);
+      }
+      
+      setDeferredPrompt(null);
+    } catch (error) {
+      console.error('Erro ao instalar:', error);
+    } finally {
+      setIsInstalling(false);
     }
-    
-    setDeferredPrompt(null);
   };
 
   return (
@@ -148,31 +198,105 @@ export default function DownloadPage() {
                 </Card>
               </div>
 
-              {deferredPrompt ? (
-                <Button 
-                  size="lg" 
-                  className="w-full text-lg py-6"
-                  onClick={handleInstallClick}
-                  data-testid="button-install-pwa"
-                >
-                  <Download className="h-5 w-5 mr-2" />
-                  Descarregar Aplicação
-                </Button>
-              ) : (
-                <Card className="p-6 text-center">
-                  <p className="text-muted-foreground mb-4">
-                    Para instalar esta aplicação, procure o botão de instalação na barra de endereço do seu navegador
+              <Button 
+                size="lg" 
+                className="w-full text-lg py-6"
+                onClick={handleInstallClick}
+                disabled={isInstalling || (!deferredPrompt && !isIOS)}
+                data-testid="button-install-pwa"
+              >
+                {isInstalling ? (
+                  <>
+                    <div className="h-5 w-5 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    A instalar...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-5 w-5 mr-2" />
+                    Instalar Aplicação
+                  </>
+                )}
+              </Button>
+
+              {!deferredPrompt && !isIOS && (
+                <Card className="p-4 bg-blue-500/5 border-blue-500/20">
+                  <p className="text-sm text-center text-muted-foreground">
+                    💡 Se o botão não funcionar, procure o ícone de instalação{" "}
+                    <Download className="inline h-4 w-4" /> na barra de endereço do navegador
                   </p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <Download className="h-4 w-4" />
-                    <span>Disponível no Chrome, Edge e Safari</span>
-                  </div>
                 </Card>
               )}
             </>
           )}
         </div>
       </main>
+
+      {/* Modal para instruções iOS */}
+      <Dialog open={showIOSModal} onOpenChange={setShowIOSModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              Como Instalar no iPhone/iPad
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-4 pt-4">
+                <p className="text-sm">
+                  Para instalar esta aplicação no seu dispositivo iOS, siga estes passos:
+                </p>
+                
+                <ol className="space-y-3">
+                  <li className="flex gap-3 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                      1
+                    </span>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground mb-1">Abra o menu Partilhar</p>
+                      <p className="text-muted-foreground">
+                        Toque no botão <Share className="inline h-4 w-4" /> (Partilhar) na barra inferior do Safari
+                      </p>
+                    </div>
+                  </li>
+                  
+                  <li className="flex gap-3 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                      2
+                    </span>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground mb-1">Adicionar ao Ecrã Principal</p>
+                      <p className="text-muted-foreground">
+                        Deslize e selecione "Adicionar ao Ecrã Principal" <Plus className="inline h-4 w-4" />
+                      </p>
+                    </div>
+                  </li>
+                  
+                  <li className="flex gap-3 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                      3
+                    </span>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground mb-1">Confirmar</p>
+                      <p className="text-muted-foreground">
+                        Toque em "Adicionar" no canto superior direito
+                      </p>
+                    </div>
+                  </li>
+                </ol>
+
+                <div className="pt-4">
+                  <Button 
+                    onClick={() => setShowIOSModal(false)}
+                    className="w-full"
+                    data-testid="button-close-ios-modal"
+                  >
+                    Entendi
+                  </Button>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
