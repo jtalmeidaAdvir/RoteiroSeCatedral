@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   Download, 
   Church,
-  Smartphone,
   CheckCircle2,
   WifiOff,
   Zap,
-  ArrowLeft
+  ArrowLeft,
+  Smartphone
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -21,17 +20,12 @@ interface BeforeInstallPromptEvent extends Event {
 export default function DownloadPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     // Detectar se já está instalada
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
     }
-
-    // Detectar iOS
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    setIsIOS(iOS);
 
     // Capturar o evento de instalação
     const handler = (e: Event) => {
@@ -154,7 +148,7 @@ export default function DownloadPage() {
                 </Card>
               </div>
 
-              {deferredPrompt && !isIOS && (
+              {deferredPrompt ? (
                 <Button 
                   size="lg" 
                   className="w-full text-lg py-6"
@@ -164,53 +158,17 @@ export default function DownloadPage() {
                   <Download className="h-5 w-5 mr-2" />
                   Descarregar Aplicação
                 </Button>
-              )}
-
-              {isIOS && (
-                <Card className="p-6 bg-blue-500/5 border-blue-500/20">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Smartphone className="h-5 w-5 text-blue-600" />
-                    Instruções para iPhone/iPad
-                  </h3>
-                  <ol className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">1.</span>
-                      <span>Toque no botão <strong>Partilhar</strong> (quadrado com seta ↑) no fundo do Safari</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">2.</span>
-                      <span>Deslize e seleccione <strong>"Adicionar ao Ecrã Principal"</strong></span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">3.</span>
-                      <span>Toque em <strong>"Adicionar"</strong> no canto superior direito</span>
-                    </li>
-                  </ol>
-                </Card>
-              )}
-
-              {!deferredPrompt && !isIOS && (
-                <Card className="p-6 bg-amber-500/5 border-amber-500/20">
-                  <h3 className="font-semibold mb-3">📱 Como Instalar</h3>
-                  <div className="space-y-3 text-sm text-muted-foreground">
-                    <div>
-                      <p className="font-semibold text-foreground mb-1">Chrome/Edge (Android):</p>
-                      <p>Menu (⋮) → "Adicionar ao ecrã inicial"</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground mb-1">Chrome/Edge (Desktop):</p>
-                      <p>Procure o ícone ⊕ na barra de endereço ou vá ao Menu → "Instalar Tour Sé de Braga"</p>
-                    </div>
+              ) : (
+                <Card className="p-6 text-center">
+                  <p className="text-muted-foreground mb-4">
+                    Para instalar esta aplicação, procure o botão de instalação na barra de endereço do seu navegador
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Download className="h-4 w-4" />
+                    <span>Disponível no Chrome, Edge e Safari</span>
                   </div>
                 </Card>
               )}
-
-              <div className="text-center">
-                <Badge variant="secondary" className="text-xs">
-                  <Church className="h-3 w-3 mr-1" />
-                  Aplicação Web Progressiva (PWA)
-                </Badge>
-              </div>
             </>
           )}
         </div>
